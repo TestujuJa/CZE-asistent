@@ -1,0 +1,28 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="bg-gray-100">
+    <ActionBar title="Hlasový Asistent" class="bg-blue-600 text-white" />
+    
+    <StackLayout class="p-4 space-y-4">
+        <!-- Status indikátor -->
+        <Label text="{{ status }}" class="text-lg text-center font-bold" textWrap="true" />
+        
+        <!-- Tlačítko pro aktivaci -->
+        <Button text="{{ isListening ? 'Stop' : 'Start' }}" 
+                tap="{{ toggleListening }}" 
+                class="{{ isListening ? 'bg-red-500' : 'bg-green-500' }} text-white font-bold p-4 rounded-full" />
+        
+        <!-- Rozpoznaný text -->
+        <StackLayout class="bg-white p-4 rounded-lg shadow-md" visibility="{{ recognizedText ? 'visible' : 'collapsed' }}">
+            <Label text="Rozpoznaný text:" class="text-sm text-gray-600" />
+            <Label text="{{ recognizedText }}" class="text-lg font-semibold" textWrap="true" />
+        </StackLayout>
+        
+        <!-- Přeložený text -->
+        <StackLayout class="bg-white p-4 rounded-lg shadow-md" visibility="{{ translatedText ? 'visible' : 'collapsed' }}">
+            <Label text="Přeložený text:" class="text-sm text-gray-600" />
+            <Label text="{{ translatedText }}" class="text-lg font-semibold" textWrap="true" />
+        </StackLayout>
+        
+        <!-- Nastavení -->
+        <Button text="Nastavení" tap="{{ showSettings }}" class="bg-gray-500 text-white font-bold p-2 rounded" />
+    </StackLayout>
+</Page>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="bg-gray-100">
+    <ActionBar title="Nastavení" class="bg-blue-600 text-white">
+        <NavigationButton text="Zpět" android.systemIcon="ic_menu_back" />
+    </ActionBar>
+
+    <ScrollView>
+        <StackLayout class="p-4 space-y-4">
+            <!-- Aktivační fráze -->
+            <Label text="Aktivační fráze" class="text-lg font-bold" />
+            <GridLayout columns="*, auto" class="mb-2">
+                <TextField col="0" text="{{ currentPhrase }}" hint="Zadejte novou frázi" 
+                          class="p-2 bg-white rounded border-gray-300 border-width-1" />
+                <Button col="1" text="Přidat" tap="{{ addPhrase }}" 
+                        class="ml-2 bg-blue-500 text-white font-bold rounded-lg" />
+            </GridLayout>
+            
+            <ListView items="{{ wakePhrases }}" class="bg-white rounded-lg">
+                <ListView.itemTemplate>
+                    <GridLayout columns="*, auto" class="p-2">
+                        <Label col="0" text="{{ $value }}" class="text-gray-800" />
+                        <Button col="1" text="Odstranit" tap="{{ $parent.removePhrase }}" 
+                                class="bg-red-500 text-white text-sm rounded" />
+                    </GridLayout>
+                </ListView.itemTemplate>
+            </ListView>
+
+            <!-- Zvuková zpětná vazba -->
+            <Label text="Zvuková zpětná vazba" class="text-lg font-bold mt-4" />
+            <Switch checked="{{ feedbackEnabled }}" class="ml-2" />
+
+            <!-- Citlivost rozpoznávání -->
+            <Label text="Citlivost rozpoznávání" class="text-lg font-bold mt-4" />
+            <Slider value="{{ sensitivity }}" minValue="0" maxValue="1" class="ml-2" />
+            <Label text="{{ sensitivity | number:'1.1' }}" class="text-center text-gray-600" />
+        </StackLayout>
+    </ScrollView>
+</Page>
