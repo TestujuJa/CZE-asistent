@@ -33,6 +33,32 @@
             <Label text="Citlivost rozpoznávání" class="text-lg font-bold mt-4" />
             <Slider value="{{ sensitivity }}" minValue="0" maxValue="1" class="ml-2" />
             <Label text="{{ sensitivity | number:'1.1' }}" class="text-center text-gray-600" />
+
+            <!-- Webhooky -->
+            <Label text="Webhooky" class="text-lg font-bold mt-6 border-t-2 border-gray-300 pt-4" />
+
+            <!-- Formulář pro přidání webhooku -->
+            <StackLayout class="space-y-2 bg-gray-200 p-3 rounded-lg">
+                <Label text="Přidat nový webhook" class="font-semibold" />
+                <TextField text="{{ newWebhookName }}" hint="Název (např. Světlo v obýváku)" class="p-2 bg-white rounded" />
+                <TextField text="{{ newWebhookPhrase }}" hint="Spouštěcí fráze (např. rozsviť světlo)" class="p-2 bg-white rounded" />
+                <TextField text="{{ newWebhookUrl }}" hint="URL adresa webhooku" autocapitalizationType="none" class="p-2 bg-white rounded" />
+                <Button text="Přidat webhook" tap="{{ addWebhook }}" class="mt-2 bg-blue-500 text-white font-bold rounded-lg" />
+            </StackLayout>
+
+            <!-- Seznam webhooků -->
+            <ListView items="{{ webhooks }}" class="bg-white rounded-lg mt-4">
+                <ListView.itemTemplate>
+                    <GridLayout columns="*, auto" rows="auto, auto, auto" class="p-3 border-b border-gray-200">
+                        <Label row="0" col="0" text="{{ name }}" class="font-bold text-lg" />
+                        <Label row="1" col="0" text="{{ phrase }}" class="text-sm text-gray-600" />
+                        <Label row="2" col="0" text="{{ url }}" class="text-xs text-blue-500" textWrap="true" />
+
+                        <Button row="0" rowspan="3" col="1" text="Odstranit" tap="{{ $parent.removeWebhook }}"
+                                class="bg-red-500 text-white text-sm rounded m-auto" />
+                    </GridLayout>
+                </ListView.itemTemplate>
+            </ListView>
         </StackLayout>
     </ScrollView>
 </Page>
