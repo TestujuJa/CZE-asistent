@@ -1,7 +1,10 @@
 import { knownFolders, path, File } from '@nativescript/core';
 
+declare var android: any;
+declare var java: any;
+
 export class FeedbackService {
-    private player: android.media.MediaPlayer;
+    private player: any;
     private readonly soundsPath: string;
 
     constructor() {

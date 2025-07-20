@@ -68,6 +68,8 @@ export class AssistantService {
     private logToFile(message: string) {
         const documents = knownFolders.documents();
         const file = documents.getFile("webhook_log.txt");
-        file.append(message + "\n");
+        file.readText().then((content) => {
+            file.writeText(content + message + "\n");
+        });
     }
 }
