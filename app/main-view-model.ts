@@ -65,13 +65,20 @@ export class MainViewModel extends Observable {
                 await this.feedbackService.playStopSound();
             }
             
-            // Překlad textu
-            const translated = await this.translatorService.translate(args.text);
-            this.translatedText = translated;
+            // Zpracování příkazu
+            this.status = "Zpracovávám příkaz...";
+            const success = await this.assistantService.processCommand(args.text);
+
+            if (success) {
+                this.status = "Příkaz úspěšně vykonán!";
+            } else {
+                this.status = "Příkaz se nepodařilo vykonat.";
+            }
             
-            // Odeslání do Google Asistenta
-            this.assistantService.sendToAssistant(translated);
-            
+            // Překlad textu (pokud je potřeba)
+            // const translated = await this.translatorService.translate(args.text);
+            // this.translatedText = translated;
+
             this.status = "Čekám na aktivační frázi...";
             this.isListening = false;
             
