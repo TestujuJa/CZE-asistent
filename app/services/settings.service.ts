@@ -1,37 +1,66 @@
 import { ApplicationSettings } from '@nativescript/core';
 
-export interface Webhook {
+export type ActionType = 'webhook' | 'tasker';
+
+export interface Action {
     name: string;
     phrase: string;
-    url: string;
+    type: ActionType;
+    url?: string; // Pro webhooky
+    taskName?: string; // Pro Tasker
 }
 
 export interface AppSettings {
     wakePhrases: string[];
     feedbackEnabled: boolean;
     sensitivity: number;
-    webhooks: Webhook[];
+    actions: Action[]; // Přejmenováno z webhooks
 }
 
 export class SettingsService {
-    private readonly SETTINGS_KEY = 'voice_assistant_settings';
+    private readonly SETTINGS_KEY = 'voice_assistant_settings_v2'; // Změna klíče pro migraci
     private readonly DEFAULT_SETTINGS: AppSettings = {
         wakePhrases: ['Hey asistente', 'Pomoc'],
         feedbackEnabled: true,
         sensitivity: 0.5,
-        webhooks: [
-            { name: "Světlo v obýváku", phrase: "rozsviť světlo v obýváku", url: "https://example.com/webhook/living-room-light-on" },
-            { name: "Televize", phrase: "zapni televizi", url: "https://example.com/webhook/tv-on" }
+        actions: [
+            { name: "Světlo v obýváku", phrase: "rozsviť světlo v obýváku", type: 'webhook', url: "https://example.com/webhook/living-room-light-on" },
+            { name: "Televize", phrase: "zapni televizi", type: 'webhook', url: "https://example.com/webhook/tv-on" },
+            { name: "Spusť hudbu", phrase: "pusť hudbu", type: 'tasker', taskName: "PlayMusic" }
         ]
     };
+
+    constructor() {
+        this.migrateOldSettings();
+    }
+
+    private migrateOldSettings() {
+        const oldSettingsKey = 'voice_assistant_settings';
+        const oldSettings = ApplicationSettings.getString(oldSettingsKey);
+        if (oldSettings) {
+            const parsedOld = JSON.parse(oldSettings);
+            if (parsedOld.webhooks) {
+                const newActions: Action[] = parsedOld.webhooks.map(wh => ({
+                    ...wh,
+                    type: 'webhook'
+                }));
+                const newSettings: AppSettings = {
+                    ...parsedOld,
+                    actions: newActions,
+                    webhooks: undefined // odstraníme staré pole
+                };
+                this.saveSettings(newSettings);
+                ApplicationSettings.remove(oldSettingsKey); // Smažeme stará nastavení
+            }
+        }
+    }
 
     public getSettings(): AppSettings {
         const settings = ApplicationSettings.getString(this.SETTINGS_KEY);
         if (settings) {
             const parsed = JSON.parse(settings);
-            // Zajistíme, že i starší verze nastavení budou mít pole webhooks
-            if (!parsed.webhooks) {
-                parsed.webhooks = this.DEFAULT_SETTINGS.webhooks;
+            if (!parsed.actions) {
+                parsed.actions = this.DEFAULT_SETTINGS.actions;
             }
             return parsed;
         }
@@ -60,28 +89,28 @@ export class SettingsService {
         this.saveSettings(settings);
     }
 
-    public getWebhooks(): Webhook[] {
-        return this.getSettings().webhooks;
+    public getActions(): Action[] {
+        return this.getSettings().actions;
     }
 
-    public addWebhook(webhook: Webhook) {
+    public addAction(action: Action) {
         const settings = this.getSettings();
-        settings.webhooks.push(webhook);
+        settings.actions.push(action);
         this.saveSettings(settings);
     }
 
-    public updateWebhook(index: number, webhook: Webhook) {
+    public updateAction(index: number, action: Action) {
         const settings = this.getSettings();
-        if (index >= 0 && index < settings.webhooks.length) {
-            settings.webhooks[index] = webhook;
+        if (index >= 0 && index < settings.actions.length) {
+            settings.actions[index] = action;
             this.saveSettings(settings);
         }
     }
 
-    public deleteWebhook(index: number) {
+    public deleteAction(index: number) {
         const settings = this.getSettings();
-        if (index >= 0 && index < settings.webhooks.length) {
-            settings.webhooks.splice(index, 1);
+        if (index >= 0 && index < settings.actions.length) {
+            settings.actions.splice(index, 1);
             this.saveSettings(settings);
         }
     }

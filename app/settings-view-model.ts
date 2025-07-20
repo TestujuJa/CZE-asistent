@@ -1,5 +1,5 @@
 import { Observable } from '@nativescript/core';
-import { SettingsService, Webhook } from './services/settings.service';
+import { SettingsService, Action, ActionType } from './services/settings.service';
 
 export class SettingsViewModel extends Observable {
     private settingsService: SettingsService;
@@ -10,11 +10,13 @@ export class SettingsViewModel extends Observable {
     private _feedbackEnabled: boolean = true;
     private _sensitivity: number = 0.5;
 
-    // Vlastnosti pro webhooky
-    private _webhooks: Webhook[] = [];
-    private _newWebhookName: string = '';
-    private _newWebhookPhrase: string = '';
-    private _newWebhookUrl: string = '';
+    // Vlastnosti pro akce
+    private _actions: Action[] = [];
+    private _newActionName: string = '';
+    private _newActionPhrase: string = '';
+    private _newActionUrl: string = '';
+    private _newActionTaskName: string = '';
+    private _newActionType: ActionType = 'webhook'; // Výchozí typ
 
     constructor() {
         super();
@@ -24,15 +26,10 @@ export class SettingsViewModel extends Observable {
 
     private loadSettings() {
         const settings = this.settingsService.getSettings();
-        this._wakePhrases = [...settings.wakePhrases];
-        this._feedbackEnabled = settings.feedbackEnabled;
-        this._sensitivity = settings.sensitivity;
-        this._webhooks = [...settings.webhooks];
-        
-        this.notifyPropertyChange('wakePhrases', this._wakePhrases);
-        this.notifyPropertyChange('feedbackEnabled', this._feedbackEnabled);
-        this.notifyPropertyChange('sensitivity', this._sensitivity);
-        this.notifyPropertyChange('webhooks', this._webhooks);
+        this.wakePhrases = [...settings.wakePhrases];
+        this.feedbackEnabled = settings.feedbackEnabled;
+        this.sensitivity = settings.sensitivity;
+        this.actions = [...settings.actions];
     }
 
     // Gettery a Settery pro stávající vlastnosti
@@ -68,29 +65,43 @@ export class SettingsViewModel extends Observable {
         }
     }
 
-    // Gettery a Settery pro webhooky
-    get webhooks(): Webhook[] { return this._webhooks; }
-    set webhooks(value: Webhook[]) {
-        this._webhooks = value;
-        this.notifyPropertyChange('webhooks', value);
+    // Gettery a Settery pro akce
+    get actions(): Action[] { return this._actions; }
+    set actions(value: Action[]) {
+        this._actions = value;
+        this.notifyPropertyChange('actions', value);
     }
 
-    get newWebhookName(): string { return this._newWebhookName; }
-    set newWebhookName(value: string) {
-        this._newWebhookName = value;
-        this.notifyPropertyChange('newWebhookName', value);
+    get newActionName(): string { return this._newActionName; }
+    set newActionName(value: string) {
+        this._newActionName = value;
+        this.notifyPropertyChange('newActionName', value);
     }
 
-    get newWebhookPhrase(): string { return this._newWebhookPhrase; }
-    set newWebhookPhrase(value: string) {
-        this._newWebhookPhrase = value;
-        this.notifyPropertyChange('newWebhookPhrase', value);
+    get newActionPhrase(): string { return this._newActionPhrase; }
+    set newActionPhrase(value: string) {
+        this._newActionPhrase = value;
+        this.notifyPropertyChange('newActionPhrase', value);
     }
 
-    get newWebhookUrl(): string { return this._newWebhookUrl; }
-    set newWebhookUrl(value: string) {
-        this._newWebhookUrl = value;
-        this.notifyPropertyChange('newWebhookUrl', value);
+    get newActionUrl(): string { return this._newActionUrl; }
+    set newActionUrl(value: string) {
+        this._newActionUrl = value;
+        this.notifyPropertyChange('newActionUrl', value);
+    }
+
+    get newActionTaskName(): string { return this._newActionTaskName; }
+    set newActionTaskName(value: string) {
+        this._newActionTaskName = value;
+        this.notifyPropertyChange('newActionTaskName', value);
+    }
+
+    get newActionType(): ActionType { return this._newActionType; }
+    set newActionType(value: ActionType) {
+        if (this._newActionType !== value) {
+            this._newActionType = value;
+            this.notifyPropertyChange('newActionType', value);
+        }
     }
 
     // Metody pro správu
@@ -110,29 +121,35 @@ export class SettingsViewModel extends Observable {
         this.wakePhrases = updatedPhrases;
     }
 
-    public addWebhook() {
-        if (this.newWebhookName && this.newWebhookPhrase && this.newWebhookUrl) {
-            const newWebhook: Webhook = {
-                name: this.newWebhookName,
-                phrase: this.newWebhookPhrase,
-                url: this.newWebhookUrl
+    public addAction() {
+        const isWebhookValid = this.newActionType === 'webhook' && this.newActionUrl;
+        const isTaskerValid = this.newActionType === 'tasker' && this.newActionTaskName;
+
+        if (this.newActionName && this.newActionPhrase && (isWebhookValid || isTaskerValid)) {
+            const newAction: Action = {
+                name: this.newActionName,
+                phrase: this.newActionPhrase,
+                type: this.newActionType,
+                url: this.newActionType === 'webhook' ? this.newActionUrl : undefined,
+                taskName: this.newActionType === 'tasker' ? this.newActionTaskName : undefined,
             };
-            this.settingsService.addWebhook(newWebhook);
-            this.webhooks = [...this.settingsService.getWebhooks()]; // Znovu načteme
+            this.settingsService.addAction(newAction);
+            this.actions = [...this.settingsService.getActions()];
 
             // Vyčistíme formulář
-            this.newWebhookName = '';
-            this.newWebhookPhrase = '';
-            this.newWebhookUrl = '';
+            this.newActionName = '';
+            this.newActionPhrase = '';
+            this.newActionUrl = '';
+            this.newActionTaskName = '';
         }
     }
 
-    public removeWebhook(args: any) {
-        const webhookToRemove = args.object.bindingContext;
-        const index = this.webhooks.findIndex(wh => wh === webhookToRemove);
+    public removeAction(args: any) {
+        const actionToRemove = args.object.bindingContext;
+        const index = this.actions.findIndex(a => a === actionToRemove);
         if (index !== -1) {
-            this.settingsService.deleteWebhook(index);
-            this.webhooks = [...this.settingsService.getWebhooks()]; // Znovu načteme
+            this.settingsService.deleteAction(index);
+            this.actions = [...this.settingsService.getActions()];
         }
     }
 }
