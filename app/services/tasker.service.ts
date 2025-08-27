@@ -1,4 +1,5 @@
 import { Application, Utils } from "@nativescript/core";
+declare var android: any;
 
 export class TaskerService {
 

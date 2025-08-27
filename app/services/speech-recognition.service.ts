@@ -1,5 +1,7 @@
 import { AndroidApplication, Application } from '@nativescript/core';
 import { Observable } from '@nativescript/core';
+declare var android: any;
+declare var java: any;
 import { SettingsService } from './settings.service';
 
 export class SpeechRecognitionService extends Observable {

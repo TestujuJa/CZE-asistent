@@ -1,3 +1,4 @@
+declare var android: any;
 import { Application, AndroidApplication } from '@nativescript/core';
 
 export class PermissionsService {
@@ -38,7 +39,6 @@ export class PermissionsService {
 
                 if (requestCode === REQUEST_CODE) {
                     Application.android.off(AndroidApplication.activityRequestPermissionsEvent, callback);
-                    
                     if (grantResults.length > 0 && grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
                         resolve(true);
                     } else {
