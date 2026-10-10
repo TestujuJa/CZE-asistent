@@ -1,10 +1,12 @@
 import { Observable, Frame } from '@nativescript/core';
 import { SettingsService, Action, ActionType } from './services/settings.service';
 import { TextToSpeechService } from './services/text-to-speech.service';
+import { ThemeService } from './services/theme.service';
 
 export class SettingsViewModel extends Observable {
     private settingsService: SettingsService;
     private ttsService: TextToSpeechService;
+    public themeService: ThemeService;
 
     // Stávající vlastnosti
     private _currentPhrase: string = '';
@@ -31,6 +33,7 @@ export class SettingsViewModel extends Observable {
         super();
         this.settingsService = new SettingsService();
         this.ttsService = new TextToSpeechService();
+        this.themeService = new ThemeService();
         this.loadSettings();
         this.loadAvailableLanguages();
     }
@@ -244,5 +247,10 @@ export class SettingsViewModel extends Observable {
         if (this.ttsEnabled) {
             this.ttsService.speak("Test hlasové zpětné vazby. Tohle je testovací zpráva.");
         }
+    }
+
+    public toggleTheme() {
+        this.themeService.toggleTheme();
+        this.notifyPropertyChange('themeService', this.themeService);
     }
 }

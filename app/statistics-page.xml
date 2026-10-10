@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="bg-gray-100">
-    <ActionBar title="Statistiky použití" class="bg-blue-600 text-white">
-        <NavigationButton text="Zpět" android.systemIcon="ic_menu_back" />
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="bg-theme-primary">
+    <ActionBar title="Statistiky pou\u017eit\u00ed" class="bg-blue-600 text-white">
+        <NavigationButton text="Zp\u011bt" android.systemIcon="ic_menu_back" />
     </ActionBar>
 
     <ScrollView>
-        <StackLayout class="p-4 space-y-6">
+        <StackLayout class="p-4 space-y-6 animate-fade-in">
             <!-- Loading indicator -->
             <ActivityIndicator busy="{{ isLoading }}" visibility="{{ isLoading ? 'visible' : 'collapsed' }}" 
                                class="m-auto" />
 
             <!-- Overall Statistics Card -->
-            <StackLayout class="bg-white p-4 rounded-lg shadow-md space-y-4" visibility="{{ !isLoading ? 'visible' : 'collapsed' }}">
-                <Label text="Celkové statistiky" class="text-lg font-bold text-blue-600" />
+            <StackLayout class="bg-theme-secondary p-4 rounded-lg shadow-theme space-y-4" visibility="{{ !isLoading ? 'visible' : 'collapsed' }}" animation="slideIn">
+                <Label text="Celkov\u00e9 statistiky" class="text-lg font-bold text-blue-400" />
 
                 <GridLayout columns="*, *" rows="auto, auto, auto" class="gap-4">
                     <!-- Total Commands -->
-                    <StackLayout col="0" row="0" class="bg-gray-50 p-3 rounded-lg">
-                        <Label text="Celkem příkazů" class="text-sm text-gray-600" />
+                    <StackLayout col="0" row="0" class="bg-white p-3 rounded-lg">
+                        <Label text="Celkem p\u0159\u00edkaz\u016f" class="text-sm text-gray-600" />
                         <Label text="{{ formatNumber(overallStats.totalCommands) }}" class="text-2xl font-bold text-gray-800" />
                     </StackLayout>
 
                     <!-- Success Rate -->
-                    <StackLayout col="1" row="0" class="bg-gray-50 p-3 rounded-lg">
-                        <Label text="Úspěšnost" class="text-sm text-gray-600" />
+                    <StackLayout col="1" row="0" class="bg-white p-3 rounded-lg">
+                        <Label text="\u00dasp\u011b\u0161nost" class="text-sm text-gray-600" />
                         <StackLayout orientation="horizontal" class="align-center">
                             <Label text="{{ formatPercentage(overallStats.successRate) }}" class="text-2xl font-bold text-gray-800" />
                             <StackLayout class="w-3 h-3 rounded-full ml-2 {{ getStatusColor(overallStats.successRate) }}" />
@@ -31,33 +31,33 @@
                     </StackLayout>
 
                     <!-- Successful -->
-                    <StackLayout col="0" row="1" class="bg-green-50 p-3 rounded-lg">
-                        <Label text="Úspěšné" class="text-sm text-green-600" />
+                    <StackLayout col="0" row="1" class="bg-green-100 p-3 rounded-lg">
+                        <Label text="\u00dasp\u011b\u0161n\u00e9" class="text-sm text-green-600" />
                         <Label text="{{ formatNumber(overallStats.successfulCommands) }}" class="text-2xl font-bold text-green-800" />
                     </StackLayout>
 
                     <!-- Failed -->
-                    <StackLayout col="1" row="1" class="bg-red-50 p-3 rounded-lg">
+                    <StackLayout col="1" row="1" class="bg-red-100 p-3 rounded-lg">
                         <Label text="Chyby" class="text-sm text-red-600" />
                         <Label text="{{ formatNumber(overallStats.failedCommands) }}" class="text-2xl font-bold text-red-800" />
                     </StackLayout>
 
                     <!-- Network Errors -->
-                    <StackLayout col="0" row="2" class="bg-orange-50 p-3 rounded-lg">
-                        <Label text="Síťové chyby" class="text-sm text-orange-600" />
+                    <StackLayout col="0" row="2" class="bg-orange-100 p-3 rounded-lg">
+                        <Label text="S\u00ed\u0165ov\u00e9 chyby" class="text-sm text-orange-600" />
                         <Label text="{{ formatNumber(overallStats.networkErrorCommands) }}" class="text-2xl font-bold text-orange-800" />
                     </StackLayout>
 
                     <!-- Empty cell for layout -->
-                    <StackLayout col="1" row="2" class="bg-gray-50 p-3 rounded-lg opacity-0" />
+                    <StackLayout col="1" row="2" class="bg-white p-3 rounded-lg opacity-0" />
                 </GridLayout>
             </StackLayout>
 
             <!-- Most Used Actions Card -->
-            <StackLayout class="bg-white p-4 rounded-lg shadow-md space-y-4" visibility="{{ !isLoading ? 'visible' : 'collapsed' }}">
-                <Label text="Nejpoužívanější akce" class="text-lg font-bold text-blue-600" />
+            <StackLayout class="bg-theme-secondary p-4 rounded-lg shadow-theme space-y-4" visibility="{{ !isLoading ? 'visible' : 'collapsed' }}" animation="slideIn">
+                <Label text="Nejpou\u017e\u00edvan\u011bj\u0161\u00ed akce" class="text-lg font-bold text-blue-400" />
 
-                <ListView items="{{ mostUsedActions }}" class="bg-gray-50 rounded-lg">
+                <ListView items="{{ mostUsedActions }}" class="bg-white rounded-lg">
                     <ListView.itemTemplate>
                         <GridLayout columns="auto, *, auto, auto" class="p-3 border-b border-gray-200">
                             <Label col="0" text="{{ $index + 1 }}" class="text-lg font-bold text-gray-500 w-8" />
@@ -72,16 +72,16 @@
                         </GridLayout>
                     </ListView.itemTemplate>
                     <ListView.emptyTemplate>
-                        <Label text="Žádné statistiky k dispozici" class="text-center text-gray-500 p-4" />
+                        <Label text="\u017eadn\u00e9 statistiky k dispozici" class="text-center text-gray-500 p-4" />
                     </ListView.emptyTemplate>
                 </ListView>
             </StackLayout>
 
             <!-- Least Successful Actions Card -->
-            <StackLayout class="bg-white p-4 rounded-lg shadow-md space-y-4" visibility="{{ !isLoading && leastSuccessfulActions.length > 0 ? 'visible' : 'collapsed' }}">
-                <Label text="Nejméně úspěšné akce" class="text-lg font-bold text-orange-600" />
+            <StackLayout class="bg-theme-secondary p-4 rounded-lg shadow-theme space-y-4" visibility="{{ !isLoading && leastSuccessfulActions.length > 0 ? 'visible' : 'collapsed' }}" animation="slideIn">
+                <Label text="Nejm\u00e9n\u011b \u00fasp\u011b\u0161n\u00e9 akce" class="text-lg font-bold text-orange-400" />
 
-                <ListView items="{{ leastSuccessfulActions }}" class="bg-gray-50 rounded-lg">
+                <ListView items="{{ leastSuccessfulActions }}" class="bg-white rounded-lg">
                     <ListView.itemTemplate>
                         <GridLayout columns="*, auto, auto" class="p-3 border-b border-gray-200">
                             <StackLayout col="0" orientation="vertical">
@@ -98,10 +98,10 @@
             </StackLayout>
 
             <!-- Daily Statistics Card -->
-            <StackLayout class="bg-white p-4 rounded-lg shadow-md space-y-4" visibility="{{ !isLoading && byDateStats.length > 0 ? 'visible' : 'collapsed' }}">
-                <Label text="Statistiky podle data" class="text-lg font-bold text-blue-600" />
+            <StackLayout class="bg-theme-secondary p-4 rounded-lg shadow-theme space-y-4" visibility="{{ !isLoading && byDateStats.length > 0 ? 'visible' : 'collapsed' }}" animation="slideIn">
+                <Label text="Statistiky podle data" class="text-lg font-bold text-blue-400" />
 
-                <ListView items="{{ byDateStats }}" class="bg-gray-50 rounded-lg">
+                <ListView items="{{ byDateStats }}" class="bg-white rounded-lg">
                     <ListView.itemTemplate>
                         <GridLayout columns="*, auto, auto, auto" class="p-3 border-b border-gray-200">
                             <Label col="0" text="{{ formatDate(date) }}" class="font-semibold text-gray-800" />
@@ -120,21 +120,21 @@
             </StackLayout>
 
             <!-- All Actions Detailed Card -->
-            <StackLayout class="bg-white p-4 rounded-lg shadow-md space-y-4" visibility="{{ !isLoading && allActionStats.length > 0 ? 'visible' : 'collapsed' }}">
-                <Label text="Detaily všech akcí" class="text-lg font-bold text-blue-600" />
+            <StackLayout class="bg-theme-secondary p-4 rounded-lg shadow-theme space-y-4" visibility="{{ !isLoading && allActionStats.length > 0 ? 'visible' : 'collapsed' }}" animation="slideIn">
+                <Label text="Detaily v\u0161ech akc\u00ed" class="text-lg font-bold text-blue-400" />
 
-                <ListView items="{{ allActionStats }}" class="bg-gray-50 rounded-lg">
+                <ListView items="{{ allActionStats }}" class="bg-white rounded-lg">
                     <ListView.itemTemplate>
                         <GridLayout columns="*, auto, auto, auto" rows="auto, auto" class="p-3 border-b border-gray-200">
                             <StackLayout col="0" row="0" rowspan="2" orientation="vertical">
                                 <Label text="{{ actionName }}" class="font-semibold text-gray-800" />
-                                <StackLayout class="p-1 {{ getActionTypeColor(actionType) }} rounded mt-1">
-                                    <Label text="{{ actionType }}" class="text-xs font-bold" />
+                                <StackLayout class="p-1 bg-blue-100 rounded mt-1">
+                                    <Label text="{{ actionType }}" class="text-xs font-bold text-blue-800" />
                                 </StackLayout>
                             </StackLayout>
                             <Label col="1" row="0" text="Celkem" class="text-sm text-gray-600 text-center" />
-                            <Label col="2" row="0" text="Úspěch" class="text-sm text-gray-600 text-center" />
-                            <Label col="3" row="0" text="Selhání" class="text-sm text-gray-600 text-center" />
+                            <Label col="2" row="0" text="\u00dasp\u011bch" class="text-sm text-gray-600 text-center" />
+                            <Label col="3" row="0" text="Selh\u00e1n\u00ed" class="text-sm text-gray-600 text-center" />
                             <Label col="1" row="1" text="{{ count }}" class="font-bold text-center" />
                             <Label col="2" row="1" text="{{ successCount }}" class="text-green-600 font-bold text-center" />
                             <Label col="3" row="1" text="{{ failureCount }}" class="text-red-600 font-bold text-center" />
@@ -145,7 +145,7 @@
 
             <!-- Refresh button -->
             <Button text="Obnovit statistiky" tap="{{ refresh }}" 
-                    class="bg-blue-500 text-white font-bold p-3 rounded-lg" 
+                    class="bg-blue-500 text-white font-bold p-3 rounded-lg transition-normal" 
                     visibility="{{ !isLoading ? 'visible' : 'collapsed' }}" />
         </StackLayout>
     </ScrollView>

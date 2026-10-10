@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="bg-gray-100">
-    <ActionBar title="Historie příkazů" class="bg-blue-600 text-white">
-        <NavigationButton text="Zpět" android.systemIcon="ic_menu_back" />
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="bg-theme-primary">
+    <ActionBar title="Historie p\u0159\u00edkaz\u016f" class="bg-blue-600 text-white">
+        <NavigationButton text="Zp\u011bt" android.systemIcon="ic_menu_back" />
     </ActionBar>
 
     <ScrollView>
-        <StackLayout class="p-4 space-y-4">
+        <StackLayout class="p-4 space-y-4 animate-fade-in">
             <!-- Filtry -->
-            <StackLayout class="bg-white p-4 rounded-lg shadow-md space-y-3">
-                <Label text="Filtry" class="text-lg font-bold" />
+            <StackLayout class="bg-theme-secondary p-4 rounded-lg shadow-theme space-y-3">
+                <Label text="Filtry" class="text-lg font-bold text-theme-primary" />
 
-                <!-- Vyhledávání -->
+                <!-- Vyhled\u00e1v\u00e1n\u00ed -->
                 <StackLayout>
-                    <Label text="Hledat" class="text-sm font-medium text-gray-600" />
-                    <TextField text="{{ searchText }}" hint="Zadejte hledaný text" 
-                               class="p-2 bg-gray-100 rounded border-width-1 border-gray-300" />
+                    <Label text="Hledat" class="text-sm font-medium text-theme-secondary" />
+                    <TextField text="{{ searchText }}" hint="Zadejte hledan\u00fd text" 
+                               class="p-2 bg-white rounded border-theme border-width-1 text-gray-800" />
                 </StackLayout>
 
                 <!-- Status filter -->
                 <StackLayout>
-                    <Label text="Stav" class="text-sm font-medium text-gray-600" />
-                    <DropDown opened="{{ applyFilters }}" class="p-2 bg-gray-100 rounded border-width-1 border-gray-300">
+                    <Label text="Stav" class="text-sm font-medium text-theme-secondary" />
+                    <DropDown opened="{{ applyFilters }}" class="p-2 bg-white rounded border-theme border-width-1 text-gray-800">
                         <DropDown.items>
                             <DropDownItem v-for="option in statusOptions" 
                                          [value]="option.value"
@@ -34,8 +34,8 @@
 
                 <!-- Action type filter -->
                 <StackLayout>
-                    <Label text="Typ akce" class="text-sm font-medium text-gray-600" />
-                    <DropDown opened="{{ applyFilters }}" class="p-2 bg-gray-100 rounded border-width-1 border-gray-300">
+                    <Label text="Typ akce" class="text-sm font-medium text-theme-secondary" />
+                    <DropDown opened="{{ applyFilters }}" class="p-2 bg-white rounded border-theme border-width-1 text-gray-800">
                         <DropDown.items>
                             <DropDownItem v-for="option in actionTypeOptions" 
                                          [value]="option.value"
@@ -50,73 +50,73 @@
                 <!-- Date filters -->
                 <StackLayout orientation="horizontal" class="space-x-2">
                     <StackLayout class="flex-1">
-                        <Label text="Od data" class="text-sm font-medium text-gray-600" />
-                        <DatePicker date="{{ startDate }}" class="p-2 bg-gray-100 rounded border-width-1 border-gray-300" />
+                        <Label text="Od data" class="text-sm font-medium text-theme-secondary" />
+                        <DatePicker date="{{ startDate }}" class="p-2 bg-white rounded border-theme border-width-1 text-gray-800" />
                     </StackLayout>
                     <StackLayout class="flex-1">
-                        <Label text="Do data" class="text-sm font-medium text-gray-600" />
-                        <DatePicker date="{{ endDate }}" class="p-2 bg-gray-100 rounded border-width-1 border-gray-300" />
+                        <Label text="Do data" class="text-sm font-medium text-theme-secondary" />
+                        <DatePicker date="{{ endDate }}" class="p-2 bg-white rounded border-theme border-width-1 text-gray-800" />
                     </StackLayout>
                 </StackLayout>
 
                 <!-- Filter buttons -->
                 <StackLayout orientation="horizontal" class="space-x-2">
-                    <Button text="Použít filtry" tap="{{ applyFilters }}" 
-                            class="flex-1 bg-blue-500 text-white font-bold p-2 rounded" />
-                    <Button text="Vyčistit filtry" tap="{{ clearFilters }}" 
-                            class="flex-1 bg-gray-500 text-white font-bold p-2 rounded" />
+                    <Button text="Pou\u017e\u00edt filtry" tap="{{ applyFilters }}" 
+                            class="flex-1 bg-blue-500 text-white font-bold p-2 rounded transition-normal" />
+                    <Button text="Vy\u010distit filtry" tap="{{ clearFilters }}" 
+                            class="flex-1 bg-gray-500 text-white font-bold p-2 rounded transition-normal" />
                 </StackLayout>
             </StackLayout>
 
             <!-- Export buttons -->
             <StackLayout orientation="horizontal" class="space-x-2">
                 <Button text="Exportovat CSV" tap="{{ exportHistory }}" 
-                        class="flex-1 bg-green-500 text-white font-bold p-2 rounded" />
+                        class="flex-1 bg-green-500 text-white font-bold p-2 rounded transition-normal" />
                 <Button text="Exportovat JSON" tap="{{ exportHistoryJSON }}" 
-                        class="flex-1 bg-green-600 text-white font-bold p-2 rounded" />
+                        class="flex-1 bg-green-600 text-white font-bold p-2 rounded transition-normal" />
             </StackLayout>
 
             <!-- Clear all button -->
             <Button text="Smazat celou historii" tap="{{ clearAllHistory }}" 
-                    class="bg-red-500 text-white font-bold p-2 rounded" />
+                    class="bg-red-500 text-white font-bold p-2 rounded transition-normal" />
 
             <!-- Seznam historie -->
-            <Label text="Záznamy ({{ filteredHistory.length }})" class="text-lg font-bold mt-4" />
+            <Label text="Z\u00e1znamy ({{ filteredHistory.length }})" class="text-lg font-bold text-theme-primary mt-4" />
 
-            <ListView items="{{ filteredHistory }}" class="bg-white rounded-lg">
+            <ListView items="{{ filteredHistory }}" class="bg-theme-secondary rounded-lg shadow-theme">
                 <ListView.itemTemplate>
-                    <GridLayout columns="auto, *, auto" rows="auto, auto, auto" class="p-3 border-b border-gray-200">
+                    <GridLayout columns="auto, *, auto" rows="auto, auto, auto" class="p-3 border-b border-theme">
                         <!-- Status indicator -->
                         <StackLayout col="0" row="0" rowspan="3" class="w-3 h-3 rounded-full m-auto {{ getStatusColor(status) }}" />
 
                         <!-- Main content -->
                         <StackLayout col="1" class="space-y-1">
                             <!-- Command -->
-                            <Label row="0" text="{{ command }}" class="font-bold text-lg" textWrap="true" />
+                            <Label row="0" text="{{ command }}" class="font-bold text-lg text-theme-primary" textWrap="true" />
 
                             <!-- Action info -->
                             <StackLayout row="1" orientation="horizontal" class="space-x-2">
-                                <Label text="{{ actionName }}" class="text-sm text-gray-600" />
-                                <Label text="•" class="text-sm text-gray-400" />
-                                <Label text="{{ getActionTypeText(actionType) }}" class="text-sm text-blue-500" />
+                                <Label text="{{ actionName }}" class="text-sm text-theme-secondary" />
+                                <Label text="\u00b7" class="text-sm text-theme-secondary" />
+                                <Label text="{{ getActionTypeText(actionType) }}" class="text-sm text-blue-400" />
                             </StackLayout>
 
                             <!-- Timestamp -->
-                            <Label row="2" text="{{ formatDate(timestamp) }}" class="text-xs text-gray-500" />
+                            <Label row="2" text="{{ formatDate(timestamp) }}" class="text-xs text-theme-secondary" />
 
                             <!-- Error message (if present) -->
                             <Label row="3" text="{{ errorMessage }}" 
                                    visibility="{{ errorMessage ? 'visible' : 'collapsed' }}"
-                                   class="text-xs text-red-500 mt-1" textWrap="true" />
+                                   class="text-xs text-red-400 mt-1" textWrap="true" />
                         </StackLayout>
 
                         <!-- Delete button -->
-                        <Button col="2" row="0" rowspan="4" text="×" tap="{{ $parent.deleteEntry }}"
-                                class="bg-red-100 text-red-500 text-lg font-bold rounded-full w-8 h-8" />
+                        <Button col="2" row="0" rowspan="4" text="\u00d7" tap="{{ $parent.deleteEntry }}"
+                                class="bg-red-100 text-red-500 text-lg font-bold rounded-full w-8 h-8 transition-normal" />
                     </GridLayout>
                 </ListView.itemTemplate>
                 <ListView.emptyTemplate>
-                    <Label text="Žádné záznamy v historii." class="text-center text-gray-500 p-4" />
+                    <Label text="\u017eadn\u00e9 z\u00e1znamy v historii." class="text-center text-theme-secondary p-4" />
                 </ListView.emptyTemplate>
             </ListView>
         </StackLayout>
