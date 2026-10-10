@@ -87,6 +87,52 @@
             <!-- Historie příkazů -->
             <Button text="Historie příkazů" tap="{{ showHistory }}" 
                     class="bg-purple-500 text-white font-bold p-3 rounded-lg mt-6" />
+
+            <!-- Statistiky -->
+            <Button text="Statistiky použití" tap="{{ showStatistics }}" 
+                    class="bg-orange-500 text-white font-bold p-3 rounded-lg" />
+
+            <!-- TTS Nastavení -->
+            <Label text="Hlasová zpětná vazba (TTS)" class="text-lg font-bold mt-6 border-t-2 border-gray-300 pt-4" />
+
+            <StackLayout class="bg-white p-4 rounded-lg shadow-md space-y-3">
+                <!-- Povolit TTS -->
+                <StackLayout orientation="horizontal" class="space-x-2">
+                    <Switch checked="{{ ttsEnabled }}" class="mt-1" />
+                    <Label text="Povolit hlasovou zpětnou vazbu" class="text-gray-700" />
+                </StackLayout>
+
+                <!-- Jazyk -->
+                <StackLayout>
+                    <Label text="Jazyk" class="text-sm font-medium text-gray-600" />
+                    <DropDown selectedIndex="0" class="p-2 bg-gray-100 rounded border-width-1 border-gray-300">
+                        <DropDown.items>
+                            <DropDownItem v-for="lang in availableLanguages" 
+                                         [value]="lang"
+                                         [text]="lang" />
+                        </DropDown.items>
+                        <DropDown.selectedValue twoWay="true">
+                            <Binding path="ttsLanguage" />
+                        </DropDown.selectedValue>
+                    </DropDown>
+                </StackLayout>
+
+                <!-- Výška hlasu -->
+                <StackLayout>
+                    <Label text="Výška hlasu: {{ ttsPitch | number:'1.1' }}" class="text-sm font-medium text-gray-600" />
+                    <Slider value="{{ ttsPitch }}" minValue="0.5" maxValue="2.0" step="0.1" class="ml-2" />
+                </StackLayout>
+
+                <!-- Rychlost řeči -->
+                <StackLayout>
+                    <Label text="Rychlost řeči: {{ ttsRate | number:'1.1' }}" class="text-sm font-medium text-gray-600" />
+                    <Slider value="{{ ttsRate }}" minValue="0.5" maxValue="2.0" step="0.1" class="ml-2" />
+                </StackLayout>
+
+                <!-- Test TTS -->
+                <Button text="Testovat TTS" tap="{{ testTTS }}" 
+                        class="bg-green-500 text-white font-bold p-2 rounded-lg" />
+            </StackLayout>
         </StackLayout>
     </ScrollView>
 </Page>

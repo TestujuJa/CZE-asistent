@@ -1,17 +1,20 @@
 import { SettingsService, Action } from './settings.service';
 import { TaskerService } from './tasker.service';
 import { HistoryService, CommandStatus } from './history.service';
+import { TextToSpeechService } from './text-to-speech.service';
 import { knownFolders } from '@nativescript/core';
 
 export class AssistantService {
     private settingsService: SettingsService;
     private taskerService: TaskerService;
     private historyService: HistoryService;
+    private ttsService: TextToSpeechService;
 
     constructor() {
         this.settingsService = new SettingsService();
         this.taskerService = new TaskerService();
         this.historyService = new HistoryService();
+        this.ttsService = new TextToSpeechService();
     }
 
     public async processCommand(command: string): Promise<boolean> {
@@ -24,13 +27,24 @@ export class AssistantService {
 
         if (matchedAction) {
             if (matchedAction.type === 'webhook') {
-                return this.executeWebhook(matchedAction);
+                const success = await this.executeWebhook(matchedAction);
+                if (success && this.ttsService.isEnabled()) {
+                    await this.ttsService.speak(`Akce ${matchedAction.name} byla úspěšně provedena.`);
+                }
+                return success;
             } else if (matchedAction.type === 'tasker') {
-                return this.executeTaskerTask(matchedAction);
+                const success = this.executeTaskerTask(matchedAction);
+                if (success && this.ttsService.isEnabled()) {
+                    await this.ttsService.speak(`Akce ${matchedAction.name} byla úspěšně provedena.`);
+                }
+                return success;
             }
         }
 
         console.log(`Pro příkaz "${command}" nebyla nalezena žádná akce.`);
+        if (this.ttsService.isEnabled()) {
+            await this.ttsService.speak("Bohužel jsem nenašel odpovídající akci.");
+        }
         return false;
     }
 
@@ -49,6 +63,9 @@ export class AssistantService {
             this.logToFile(`[SUCCESS] ${new Date().toISOString()}: Spuštěna úloha v Taskeru: ${action.name} - ${action.taskName}`);
         } else {
             this.logToFile(`[ERROR] ${new Date().toISOString()}: Nepodařilo se spustit úlohu v Taskeru: ${action.name} - ${action.taskName}`);
+            if (this.ttsService.isEnabled()) {
+                this.ttsService.speak(`Nepodařilo se spustit úlohu ${action.name} v Taskeru.`);
+            }
         }
         return success;
     }

@@ -15,6 +15,10 @@ export interface AppSettings {
     feedbackEnabled: boolean;
     sensitivity: number;
     actions: Action[]; // Přejmenováno z webhooks
+    ttsEnabled: boolean;
+    ttsLanguage: string;
+    ttsPitch: number;
+    ttsRate: number;
 }
 
 export class SettingsService {
@@ -27,7 +31,11 @@ export class SettingsService {
             { name: "Světlo v obýváku", phrase: "rozsviť světlo v obýváku", type: 'webhook', url: "https://example.com/webhook/living-room-light-on" },
             { name: "Televize", phrase: "zapni televizi", type: 'webhook', url: "https://example.com/webhook/tv-on" },
             { name: "Spusť hudbu", phrase: "pusť hudbu", type: 'tasker', taskName: "PlayMusic" }
-        ]
+        ],
+        ttsEnabled: true,
+        ttsLanguage: 'cs-CZ',
+        ttsPitch: 1.0,
+        ttsRate: 1.0
     };
 
     constructor() {
@@ -113,5 +121,40 @@ export class SettingsService {
             settings.actions.splice(index, 1);
             this.saveSettings(settings);
         }
+    }
+
+    // TTS Settings
+    public updateTTSEnabled(enabled: boolean) {
+        const settings = this.getSettings();
+        settings.ttsEnabled = enabled;
+        this.saveSettings(settings);
+    }
+
+    public updateTTSLanguage(language: string) {
+        const settings = this.getSettings();
+        settings.ttsLanguage = language;
+        this.saveSettings(settings);
+    }
+
+    public updateTTSPitch(pitch: number) {
+        const settings = this.getSettings();
+        settings.ttsPitch = Math.max(0.5, Math.min(2.0, pitch));
+        this.saveSettings(settings);
+    }
+
+    public updateTTSRate(rate: number) {
+        const settings = this.getSettings();
+        settings.ttsRate = Math.max(0.5, Math.min(2.0, rate));
+        this.saveSettings(settings);
+    }
+
+    public getTTSConfig() {
+        const settings = this.getSettings();
+        return {
+            enabled: settings.ttsEnabled,
+            language: settings.ttsLanguage,
+            pitch: settings.ttsPitch,
+            rate: settings.ttsRate
+        };
     }
 }

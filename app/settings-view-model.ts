@@ -1,8 +1,10 @@
 import { Observable, Frame } from '@nativescript/core';
 import { SettingsService, Action, ActionType } from './services/settings.service';
+import { TextToSpeechService } from './services/text-to-speech.service';
 
 export class SettingsViewModel extends Observable {
     private settingsService: SettingsService;
+    private ttsService: TextToSpeechService;
 
     // Stávající vlastnosti
     private _currentPhrase: string = '';
@@ -18,10 +20,19 @@ export class SettingsViewModel extends Observable {
     private _newActionTaskName: string = '';
     private _newActionType: ActionType = 'webhook'; // Výchozí typ
 
+    // TTS vlastnosti
+    private _ttsEnabled: boolean = true;
+    private _ttsLanguage: string = 'cs-CZ';
+    private _ttsPitch: number = 1.0;
+    private _ttsRate: number = 1.0;
+    private _availableLanguages: string[] = [];
+
     constructor() {
         super();
         this.settingsService = new SettingsService();
+        this.ttsService = new TextToSpeechService();
         this.loadSettings();
+        this.loadAvailableLanguages();
     }
 
     private loadSettings() {
@@ -30,6 +41,21 @@ export class SettingsViewModel extends Observable {
         this.feedbackEnabled = settings.feedbackEnabled;
         this.sensitivity = settings.sensitivity;
         this.actions = [...settings.actions];
+        
+        // Load TTS settings
+        this.ttsEnabled = settings.ttsEnabled;
+        this.ttsLanguage = settings.ttsLanguage;
+        this.ttsPitch = settings.ttsPitch;
+        this.ttsRate = settings.ttsRate;
+    }
+
+    private loadAvailableLanguages() {
+        try {
+            this.availableLanguages = this.ttsService.getAvailableLanguages();
+        } catch (error) {
+            console.error('Error loading available languages:', error);
+            this.availableLanguages = ['cs-CZ', 'en-US', 'sk-SK', 'de-DE', 'fr-FR'];
+        }
     }
 
     // Gettery a Settery pro stávající vlastnosti
@@ -104,6 +130,49 @@ export class SettingsViewModel extends Observable {
         }
     }
 
+    // TTS Gettery a Settery
+    get ttsEnabled(): boolean { return this._ttsEnabled; }
+    set ttsEnabled(value: boolean) {
+        if (this._ttsEnabled !== value) {
+            this._ttsEnabled = value;
+            this.settingsService.updateTTSEnabled(value);
+            this.ttsService.setEnabled(value);
+            this.notifyPropertyChange('ttsEnabled', value);
+        }
+    }
+
+    get ttsLanguage(): string { return this._ttsLanguage; }
+    set ttsLanguage(value: string) {
+        if (this._ttsLanguage !== value) {
+            this._ttsLanguage = value;
+            this.settingsService.updateTTSLanguage(value);
+            this.ttsService.setLanguage(value);
+            this.notifyPropertyChange('ttsLanguage', value);
+        }
+    }
+
+    get ttsPitch(): number { return this._ttsPitch; }
+    set ttsPitch(value: number) {
+        if (this._ttsPitch !== value) {
+            this._ttsPitch = value;
+            this.settingsService.updateTTSPitch(value);
+            this.ttsService.setPitch(value);
+            this.notifyPropertyChange('ttsPitch', value);
+        }
+    }
+
+    get ttsRate(): number { return this._ttsRate; }
+    set ttsRate(value: number) {
+        if (this._ttsRate !== value) {
+            this._ttsRate = value;
+            this.settingsService.updateTTSRate(value);
+            this.ttsService.setRate(value);
+            this.notifyPropertyChange('ttsRate', value);
+        }
+    }
+
+    get availableLanguages(): string[] { return this._availableLanguages; }
+
     // Metody pro správu
     public addPhrase() {
         if (this.currentPhrase && !this.wakePhrases.includes(this.currentPhrase)) {
@@ -160,5 +229,20 @@ export class SettingsViewModel extends Observable {
                 name: "slide"
             }
         });
+    }
+
+    public showStatistics() {
+        Frame.topmost().navigate({
+            moduleName: "statistics-page",
+            transition: {
+                name: "slide"
+            }
+        });
+    }
+
+    public testTTS() {
+        if (this.ttsEnabled) {
+            this.ttsService.speak("Test hlasové zpětné vazby. Tohle je testovací zpráva.");
+        }
     }
 }
