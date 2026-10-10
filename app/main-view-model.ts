@@ -5,6 +5,8 @@ import { AssistantService } from './services/assistant.service';
 import { PermissionsService } from './services/permissions.service';
 import { SettingsService } from './services/settings.service';
 import { FeedbackService } from './services/feedback.service';
+import { NotificationService } from './services/notification.service';
+import { themeService } from './app';
 
 export class MainViewModel extends Observable {
     private speechService: SpeechRecognitionService;
@@ -13,12 +15,15 @@ export class MainViewModel extends Observable {
     private permissionsService: PermissionsService;
     private settingsService: SettingsService;
     private feedbackService: FeedbackService;
+    private notificationService: NotificationService;
     
     private _isListening: boolean = false;
     private _status: string = "Kontrola oprávnění...";
     private _recognizedText: string = "";
     private _translatedText: string = "";
     private _hasPermission: boolean = false;
+    private _isOffline: boolean = false;
+    private _offlineQueueCount: number = 0;
 
     constructor() {
         super();
@@ -29,9 +34,18 @@ export class MainViewModel extends Observable {
         this.permissionsService = new PermissionsService();
         this.settingsService = new SettingsService();
         this.feedbackService = new FeedbackService();
+        this.notificationService = new NotificationService();
         
         this.checkPermissions();
         this.setupSpeechRecognition();
+        this.checkOfflineStatus();
+    }
+
+    private checkOfflineStatus() {
+        this._isOffline = this.assistantService.isOfflineModeActive();
+        this._offlineQueueCount = this.assistantService.getOfflineQueueCount();
+        this.notifyPropertyChange('isOffline', this._isOffline);
+        this.notifyPropertyChange('offlineQueueCount', this._offlineQueueCount);
     }
 
     private async checkPermissions() {
@@ -81,6 +95,7 @@ export class MainViewModel extends Observable {
 
             this.status = "Čekám na aktivační frázi...";
             this.isListening = false;
+            this.checkOfflineStatus();
             
             // Obnovení detekce wake word
             setTimeout(() => this.speechService.startWakeWordDetection(), 1000);
@@ -89,6 +104,7 @@ export class MainViewModel extends Observable {
         this.speechService.on('speechError', async (args: any) => {
             this.status = "Chyba rozpoznávání řeči";
             this.isListening = false;
+            this.checkOfflineStatus();
             
             if (this.settingsService.getSettings().feedbackEnabled) {
                 await this.feedbackService.playErrorSound();
@@ -147,6 +163,32 @@ export class MainViewModel extends Observable {
         return this._hasPermission;
     }
 
+    get isOffline(): boolean {
+        return this._isOffline;
+    }
+
+    set isOffline(value: boolean) {
+        if (this._isOffline !== value) {
+            this._isOffline = value;
+            this.notifyPropertyChange('isOffline', value);
+        }
+    }
+
+    get offlineQueueCount(): number {
+        return this._offlineQueueCount;
+    }
+
+    set offlineQueueCount(value: number) {
+        if (this._offlineQueueCount !== value) {
+            this._offlineQueueCount = value;
+            this.notifyPropertyChange('offlineQueueCount', value);
+        }
+    }
+
+    get themeService() {
+        return themeService;
+    }
+
     public async toggleListening() {
         if (!this._hasPermission) {
             await this.checkPermissions();
@@ -178,5 +220,27 @@ export class MainViewModel extends Observable {
                 name: "slide"
             }
         });
+    }
+
+    public async processOfflineQueue() {
+        this.status = "Zpracovávám offline frontu...";
+        const result = await this.assistantService.processOfflineQueue();
+        this.status = `Zpracováno: ${result.processed}, Selhalo: ${result.failed}`;
+        this.checkOfflineStatus();
+        
+        if (this.notificationService.isEnabled()) {
+            if (result.processed > 0) {
+                this.notificationService.showSuccess(
+                    'Offline fronta',
+                    `Zpracováno ${result.processed} příkazů z fronty.`
+                );
+            }
+            if (result.failed > 0) {
+                this.notificationService.showError(
+                    'Offline fronta',
+                    `${result.failed} příkazů se nepodařilo zpracovat.`
+                );
+            }
+        }
     }
 }

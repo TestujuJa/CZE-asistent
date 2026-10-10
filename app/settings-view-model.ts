@@ -29,6 +29,13 @@ export class SettingsViewModel extends Observable {
     private _ttsRate: number = 1.0;
     private _availableLanguages: string[] = [];
 
+    // Theme vlastnosti
+    private _themeModes: { label: string; value: 'light' | 'dark' | 'system' }[] = [
+        { label: 'Systém', value: 'system' },
+        { label: 'Světlý', value: 'light' },
+        { label: 'Tmavý', value: 'dark' }
+    ];
+
     constructor() {
         super();
         this.settingsService = new SettingsService();
@@ -176,6 +183,21 @@ export class SettingsViewModel extends Observable {
 
     get availableLanguages(): string[] { return this._availableLanguages; }
 
+    // Theme Gettery
+    get themeModes(): { label: string; value: 'light' | 'dark' | 'system' }[] {
+        return this._themeModes;
+    }
+
+    get currentThemeMode(): 'light' | 'dark' | 'system' {
+        return this.themeService.getMode();
+    }
+
+    set currentThemeMode(value: 'light' | 'dark' | 'system') {
+        this.themeService.setMode(value);
+        this.themeService.applyTheme();
+        this.notifyPropertyChange('currentThemeMode', value);
+    }
+
     // Metody pro správu
     public addPhrase() {
         if (this.currentPhrase && !this.wakePhrases.includes(this.currentPhrase)) {
@@ -251,6 +273,12 @@ export class SettingsViewModel extends Observable {
 
     public toggleTheme() {
         this.themeService.toggleTheme();
+        this.themeService.applyTheme();
         this.notifyPropertyChange('themeService', this.themeService);
+        this.notifyPropertyChange('currentThemeMode', this.themeService.getMode());
+    }
+
+    public setThemeMode(mode: 'light' | 'dark' | 'system') {
+        this.currentThemeMode = mode;
     }
 }

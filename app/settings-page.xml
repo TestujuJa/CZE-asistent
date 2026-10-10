@@ -137,10 +137,18 @@
             <!-- Tmav\u00fd re\u017eim -->
             <Label text="Vzhled" class="text-lg font-bold text-theme-primary mt-6 border-t-2 border-theme pt-4" />
             <StackLayout class="bg-theme-secondary p-4 rounded-lg shadow-theme space-y-3">
-                <StackLayout orientation="horizontal" class="space-x-2">
-                    <Switch checked="{{ themeService.isDarkMode() }}" class="mt-1" />
-                    <Label text="Tmav\u00fd re\u017eim" class="text-theme-primary" />
-                </StackLayout>
+                <Label text="Re\u017eim zobrazen\u00ed" class="text-sm font-medium text-theme-secondary" />
+                <DropDown selectedIndex="0" class="p-2 bg-white rounded border-theme border-width-1 text-gray-800">
+                    <DropDown.items>
+                        <DropDownItem v-for="mode in themeModes" 
+                                     [value]="mode.value"
+                                     [text]="mode.label" />
+                    </DropDown.items>
+                    <DropDown.selectedValue twoWay="true">
+                        <Binding path="currentThemeMode" />
+                    </DropDown.selectedValue>
+                </DropDown>
+                <Label text="Aktu\u00e1ln\u001d re\u017eim: {{ currentThemeMode }}" class="text-xs text-theme-secondary" />
             </StackLayout>
         </StackLayout>
     </ScrollView>
