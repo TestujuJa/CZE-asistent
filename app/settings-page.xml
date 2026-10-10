@@ -83,6 +83,10 @@
                     </GridLayout>
                 </ListView.itemTemplate>
             </ListView>
+
+            <!-- Historie příkazů -->
+            <Button text="Historie příkazů" tap="{{ showHistory }}" 
+                    class="bg-purple-500 text-white font-bold p-3 rounded-lg mt-6" />
         </StackLayout>
     </ScrollView>
 </Page>

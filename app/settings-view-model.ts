@@ -1,4 +1,4 @@
-import { Observable } from '@nativescript/core';
+import { Observable, Frame } from '@nativescript/core';
 import { SettingsService, Action, ActionType } from './services/settings.service';
 
 export class SettingsViewModel extends Observable {
@@ -151,5 +151,14 @@ export class SettingsViewModel extends Observable {
             this.settingsService.deleteAction(index);
             this.actions = [...this.settingsService.getActions()];
         }
+    }
+
+    public showHistory() {
+        Frame.topmost().navigate({
+            moduleName: "history-page",
+            transition: {
+                name: "slide"
+            }
+        });
     }
 }
